@@ -14,7 +14,7 @@ from search import search_similar, apply_filters, metadata_dict
 from llm import extract_filters
 
 load_dotenv()
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+BACKEND_URL = os.getenv("BACKEND_URL")
 
 app = FastAPI()
 
