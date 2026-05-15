@@ -19,7 +19,10 @@ EXPECTED_DIM = 512
 # ============================
 # LOAD METADATA
 # ============================
-df = pd.read_csv("fashion_subset.csv")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+csv_path = os.path.join(BASE_DIR, "fashion_subset.csv")
+df = pd.read_csv(csv_path)
 df.columns = df.columns.str.strip()
 
 metadata_dict: dict[str, dict] = {}
@@ -40,8 +43,10 @@ print(f"Metadata loaded: {len(metadata_dict)} items.")
 # ============================
 # LOAD FAISS INDEX
 # ============================
-index = faiss.read_index("faiss.index")
-image_paths = np.load("image_paths.npy", allow_pickle=True)
+index_path = os.path.join(BASE_DIR, "faiss.index")
+index = faiss.read_index(index_path)
+paths_path = os.path.join(BASE_DIR, "image_paths.npy")
+image_paths = np.load(paths_path, allow_pickle=True)
 
 if index.d != EXPECTED_DIM:
     raise ValueError(

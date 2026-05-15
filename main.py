@@ -26,7 +26,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/images", StaticFiles(directory="fashion"), name="images")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FASHION_DIR = os.path.join(BASE_DIR, "fashion")
+
+app.mount("/images", StaticFiles(directory=FASHION_DIR), name="images")
 
 
 def safe_image_embedding(image) -> np.ndarray:
