@@ -1,821 +1,745 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NOVA | AI Visual Search & Product Discovery Engine</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI-Powered Visual Search & Product Discovery Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            background: #f5f7fb;
-            font-family: 'Inter', sans-serif;
-            color: #0f172a;
-            padding: 28px 20px 60px 20px;
-        }
+  :root {
+    --cream: #F5F0E8;
+    --ink:   #1A1814;
+    --warm:  #C8A882;
+    --rust:  #B85C38;
+    --muted: #8A857C;
+    --card:  #FFFFFF;
+    --border:#E0D9CF;
+    --red:   #D94F3D;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body:    'DM Sans', system-ui, sans-serif;
+  }
 
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-        }
+  html { font-size: 16px; }
 
-        .hero {
-            text-align: center;
-            margin-bottom: 32px;
-        }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        .hero h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #0f172a, #2d3a4f);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 48px 20px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+    background: var(--cream);
+    z-index: 100;
+  }
 
-        .hero p {
-            color: #475569;
-            margin-top: 6px;
-            font-weight: 400;
-            font-size: 0.9rem;
-        }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .logo span { color: var(--rust); font-style: italic; }
 
-        .status-badge {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 5px 14px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            background: #f1f5f9;
-            color: #475569;
-        }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
 
-        .status-badge.connected {
-            background: #dcfce7;
-            color: #166534;
-        }
+  .tagline {
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
 
-        .status-badge.disconnected {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+  .app-name {
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--warm);
+    font-weight: 500;
+    opacity: 0.85;
+  }
 
-        .unified-search-card {
-            background: white;
-            border-radius: 48px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0,0,0,0.02);
-            padding: 28px 28px 32px;
-            margin-bottom: 36px;
-            border: 1px solid #eef2f6;
-            transition: all 0.2s;
-        }
+  /* ── HERO / SEARCH SECTION ── */
+  .hero {
+    padding: 60px 48px 40px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
 
-        .search-input-group {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 14px;
-            background: #f8fafc;
-            border-radius: 100px;
-            padding: 6px 6px 6px 22px;
-            border: 1px solid #e2e8f0;
-            transition: 0.2s;
-        }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1.12;
+    font-weight: 400;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .hero-title em { color: var(--rust); font-style: italic; }
 
-        .search-input-group:focus-within {
-            border-color: #94a3b8;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-        }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 36px;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
 
-        .text-input-simple {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 16px 0;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            min-width: 180px;
-        }
+  /* ── SEARCH BAR ── */
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 56px;
+    padding: 10px 10px 10px 24px;
+    gap: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-wrap:focus-within {
+    border-color: var(--warm);
+    box-shadow: 0 0 0 3px rgba(200,168,130,0.18);
+  }
 
-        .text-input-simple::placeholder {
-            color: #94a3b8;
-            font-weight: 400;
-        }
+  #search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--ink);
+    background: transparent;
+    font-weight: 400;
+  }
+  #search-input::placeholder { color: var(--muted); }
 
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+  /* Voice button */
+  .btn-voice {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .btn-voice:hover { border-color: var(--warm); color: var(--warm); }
+  .btn-voice.listening {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+    animation: pulse-ring 1.2s ease infinite;
+  }
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(217,79,61,0.45); }
+    70%  { box-shadow: 0 0 0 10px rgba(217,79,61,0); }
+    100% { box-shadow: 0 0 0 0 rgba(217,79,61,0); }
+  }
 
-        .plus-btn {
-            background: #eef2ff;
-            border: none;
-            width: 46px;
-            height: 46px;
-            border-radius: 60px;
-            font-size: 1.6rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-            color: #1e293b;
-        }
+  /* Image upload button */
+  .btn-upload {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .btn-upload:hover { border-color: var(--warm); color: var(--warm); }
+  #file-input { display: none; }
 
-        .plus-btn:hover {
-            background: #e2e8f0;
-            transform: scale(0.96);
-        }
+  /* Search submit button */
+  .btn-search {
+    height: 42px;
+    padding: 0 24px;
+    border-radius: 40px;
+    border: none;
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .btn-search:hover  { background: var(--rust); }
+  .btn-search:active { transform: scale(0.97); }
 
-        .search-main-btn {
-            background: #0f172a;
-            border: none;
-            padding: 0 28px;
-            height: 48px;
-            border-radius: 60px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+  /* ── VOICE STATUS BAR ── */
+  .voice-status {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0 0 24px;
+    font-size: 0.82rem;
+    color: var(--rust);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .voice-status.visible { display: flex; }
+  .voice-dots span {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--rust);
+    margin: 0 1px;
+    animation: bounce 1s ease infinite;
+  }
+  .voice-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .voice-dots span:nth-child(3) { animation-delay: 0.30s; }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); opacity: .5; }
+    50%      { transform: translateY(-4px); opacity: 1; }
+  }
 
-        .search-main-btn:hover {
-            background: #1e293b;
-            transform: translateY(-1px);
-        }
+  /* ── VOICE NOT SUPPORTED BANNER ── */
+  .voice-unsupported {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 0 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: #fff8f6;
+    border: 1px solid #f0d0c8;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .voice-unsupported.visible { display: flex; }
+  .voice-unsupported a {
+    color: var(--rust);
+    text-decoration: underline;
+    cursor: pointer;
+  }
 
-        .upload-options-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-        .upload-options-card {
-            background: white;
-            border-radius: 48px;
-            padding: 32px 28px;
-            width: 320px;
-            text-align: center;
-            box-shadow: 0 30px 40px rgba(0,0,0,0.2);
-            animation: fadeUp 0.2s ease;
-        }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .upload-options-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 24px;
-            font-weight: 600;
-        }
-        .option-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 60px;
-            background: #f1f5f9;
-            border: none;
-            font-weight: 600;
-            margin-bottom: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
-        .option-btn:hover {
-            background: #e2e8f0;
-        }
-        .cancel-options {
-            background: none;
-            color: #64748b;
-            margin-top: 8px;
-        }
+  /* ── IMAGE PREVIEW ── */
+  .image-preview-wrap {
+    display: none;
+    margin-top: 20px;
+    align-items: center;
+    gap: 16px;
+  }
+  .image-preview-wrap.visible { display: flex; }
+  #image-preview {
+    width: 72px; height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+  }
+  .preview-label { font-size: 0.82rem; color: var(--muted); }
+  .btn-clear-img {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 1.1rem;
+    padding: 4px 8px;
+    transition: color 0.2s;
+  }
+  .btn-clear-img:hover { color: var(--rust); }
 
-        .image-preview-area {
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            background: #fefce8;
-            border-radius: 60px;
-            padding: 8px 16px 8px 20px;
-            border: 1px solid #fde047;
-        }
-        .preview-img {
-            width: 48px;
-            height: 48px;
-            object-fit: cover;
-            border-radius: 30px;
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-        }
-        .remove-file {
-            background: none;
-            border: none;
-            color: #ef4444;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-        .hidden-file-input {
-            display: none;
-        }
-        .mode-badge {
-            font-size: 0.7rem;
-            background: #f1f5f9;
-            padding: 5px 12px;
-            border-radius: 50px;
-            color: #334155;
-        }
+  /* ── FILTER CHIPS ── */
+  .filters-row {
+    display: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .filters-row.visible { display: flex; }
+  .chip {
+    font-size: 0.78rem;
+    padding: 5px 14px;
+    border-radius: 30px;
+    background: var(--ink);
+    color: var(--cream);
+    letter-spacing: 0.04em;
+    text-transform: capitalize;
+    font-weight: 500;
+  }
+  .chip-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    align-self: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 2px;
+  }
 
-        .filter-panel {
-            background: white;
-            border-radius: 32px;
-            padding: 16px 24px;
-            margin-bottom: 32px;
-            border: 1px solid #eef2f6;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-        }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            min-width: 120px;
-        }
-        .filter-group label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: #475569;
-        }
-        .filter-select, .filter-input {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 40px;
-            padding: 7px 12px;
-            font-size: 0.8rem;
-            font-family: 'Inter', monospace;
-            outline: none;
-        }
-        .apply-filters-btn {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 40px;
-            padding: 7px 20px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 14px;
-        }
-        .apply-filters-btn:hover {
-            background: #f1f5f9;
-        }
+  /* ── RESULTS ── */
+  .results-section {
+    padding: 0 48px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 
-        .results-section {
-            margin-top: 28px;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
-        }
-        .section-header h2 {
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-        .badge-tag {
-            font-size: 0.7rem;
-            background: #eef2ff;
-            padding: 4px 10px;
-            border-radius: 24px;
-        }
-        .horizontal-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            padding-bottom: 16px;
-            scrollbar-width: thin;
-        }
-        .product-card {
-            flex: 0 0 270px;
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            transition: 0.2s;
-            border: 1px solid #edf2f7;
-            display: flex;
-            flex-direction: column;
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -12px rgba(0,0,0,0.1);
-        }
-        .card-img {
-            height: 230px;
-            background: #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .card-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .card-details {
-            padding: 14px 14px 18px;
-        }
-        .price {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #0f172a;
-            border-bottom: 2px solid #facc15;
-            display: inline-block;
-            margin-bottom: 6px;
-        }
-        .brand {
-            font-weight: 600;
-            font-size: 0.75rem;
-            color: #334155;
-            text-transform: uppercase;
-            margin: 4px 0 2px;
-        }
-        .color-cat {
-            font-size: 0.7rem;
-            color: #475569;
-            display: flex;
-            gap: 12px;
-            margin: 6px 0 4px;
-        }
-        .product-name {
-            font-size: 0.7rem;
-            color: #5b6e8c;
-            line-height: 1.3;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            display: -webkit-box;
-        }
-        .match-tag {
-            margin-top: 8px;
-            font-size: 0.65rem;
-            font-weight: 500;
-            background: #f1f5f9;
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 40px;
-        }
-        .history-panel {
-            margin-top: 44px;
-            background: #ffffffd9;
-            border-radius: 28px;
-            padding: 18px 22px;
-            border: 1px solid #eef2f6;
-        }
-        .history-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .history-item {
-            background: #f8fafc;
-            border-radius: 40px;
-            padding: 6px 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-        }
-        .clear-history {
-            background: none;
-            border: none;
-            color: #ef4444;
-            font-size: 0.7rem;
-            cursor: pointer;
-        }
-        .loader {
-            text-align: center;
-            padding: 30px;
-            color: #3b82f6;
-        }
+  .results-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .results-count {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 400;
+  }
+  .results-type {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
 
-        .video-preview {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.92);
-            z-index: 1100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .video-preview video {
-            max-width: 90%;
-            max-height: 65%;
-            border-radius: 24px;
-            border: 2px solid white;
-        }
-        .capture-controls {
-            margin-top: 24px;
-            display: flex;
-            gap: 18px;
-        }
-        .capture-btn, .close-camera {
-            background: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .close-camera {
-            background: #ef4444;
-            color: white;
-        }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+  }
 
-        @media (max-width: 720px) {
-            .search-input-group {
-                flex-wrap: wrap;
-                background: white;
-                border-radius: 32px;
-                padding: 12px;
-            }
-            .action-buttons {
-                width: 100%;
-                justify-content: flex-end;
-            }
-            .text-input-simple {
-                width: 100%;
-                padding: 12px 0;
-            }
-        }
-    </style>
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.22s, box-shadow 0.22s;
+    cursor: pointer;
+    animation: fadeUp 0.4s both;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(26,24,20,0.10);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-img-wrap {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background: #EDE8E0;
+  }
+  .card-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .card:hover .card-img-wrap img { transform: scale(1.05); }
+
+  .card-body { padding: 14px 16px 16px; }
+  .card-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-price {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .card-badge {
+    font-size: 0.7rem;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--cream);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    text-transform: capitalize;
+  }
+
+  /* ── STATES ── */
+  .state-message {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--muted);
+  }
+  .state-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+    display: block;
+  }
+  .state-message p { font-size: 0.95rem; line-height: 1.6; }
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--warm);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    header { padding: 18px 20px 14px; }
+    .hero  { padding: 36px 20px 28px; }
+    .results-section { padding: 0 20px 40px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .btn-search span { display: none; }
+    .btn-search::after { content: '→'; }
+    .app-name { display: none; }
+  }
+</style>
 </head>
 <body>
-<div class="container">
-    <div class="hero">
-        <h1>AI-Powered Visual Search & Product Discovery Engine</h1>
-        <p>multimodal search · style similarity · intelligent filters</p>
-        <div id="backendStatus" class="status-badge">Checking backend...</div>
-    </div>
 
-    <div class="unified-search-card">
-        <div class="search-input-group">
-            <input type="text" id="unifiedQuery" class="text-input-simple" placeholder="Describe a product... or add an image via +">
-            <div class="action-buttons">
-                <button id="plusUploadBtn" class="plus-btn" title="Add image">+</button>
-                <button id="unifiedSearchBtn" class="search-main-btn">Search</button>
-            </div>
-        </div>
-        
-        <input type="file" id="unifiedFileUpload" class="hidden-file-input" accept="image/jpeg,image/png,image/webp">
-        
-        <div id="imagePreviewContainer" style="display: none;" class="image-preview-area">
-            <img id="previewThumb" class="preview-img" alt="preview">
-            <span id="previewFileName" style="font-size:0.8rem; color:#334155;"></span>
-            <button id="removeImageBtn" class="remove-file">Remove</button>
-            <span id="activeModeHint" class="mode-badge">Image mode active</span>
-        </div>
-        <div id="textOnlyHint" style="margin-top: 12px; font-size:0.7rem; color:#6c757d; display: none;">
-            Text-only mode — semantic search
-        </div>
-    </div>
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">AI-Powered Visual Search<span>&amp; </span>Product Discovery Engine</div>
+  <div class="header-right">
+    <div class="tagline">AI Fashion Search</div>
+  </div>
+</header>
 
-    <div class="filter-panel">
-        <div class="filter-group"><label>COLOR</label><select id="filterColor" class="filter-select"><option value="">any</option><option value="red">Red</option><option value="blue">Blue</option><option value="green">Green</option><option value="black">Black</option><option value="white">White</option><option value="yellow">Yellow</option><option value="pink">Pink</option></select></div>
-        <div class="filter-group"><label>CATEGORY</label><select id="filterCategory" class="filter-select"><option value="">all</option><option value="shirt">Shirt</option><option value="t-shirt">T-shirt</option><option value="jeans">Jeans</option><option value="dress">Dress</option><option value="jacket">Jacket</option><option value="shoes">Shoes</option></select></div>
-        <div class="filter-group"><label>BRAND</label><input type="text" id="filterBrand" class="filter-input" placeholder="nike, puma"></div>
-        <div class="filter-group"><label>MAX PRICE (₹)</label><input type="number" id="filterPrice" class="filter-input" placeholder="e.g., 3000"></div>
-        <div class="filter-group"><label>SORT BY</label><select id="sortBy" class="filter-select"><option value="none">Default</option><option value="price_asc">Price ↑</option><option value="price_desc">Price ↓</option></select></div>
-        <button id="applyRefineBtn" class="apply-filters-btn">Apply Filters</button>
-    </div>
+<!-- ── HERO ── -->
+<section class="hero">
 
-    <div class="results-section">
-        <div class="section-header"><h2>Style matches <span id="resultCountBadge" class="badge-tag">0 items</span></h2><span id="activeModeBadge" style="font-size:0.7rem;">—</span></div>
-        <div id="resultsGrid" class="horizontal-scroll"><div class="loader">Add an image or describe your style</div></div>
-    </div>
+  <!-- Search bar -->
+  <div class="search-wrap">
+    <input id="search-input" type="text" placeholder="Try: 'red linen shirt under ₹1500'" autocomplete="off"/>
 
-    <div class="results-section">
-        <div class="section-header"><h2>Suggestions</h2><span class="badge-tag">visual vibe</span></div>
-        <div id="similarStyleGrid" class="horizontal-scroll"><div style="color:#64748b;">Suggestions will appear here</div></div>
-    </div>
+    <!-- Mic button -->
+    <button class="btn-voice" id="btn-voice" title="Search by voice">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8"  y1="23" x2="16" y2="23"/>
+      </svg>
+    </button>
 
-    <div class="history-panel">
-        <div style="display: flex; justify-content: space-between;"><strong>Recent searches</strong><button id="clearHistoryBtn" class="clear-history">Clear all</button></div>
-        <div id="historyList" class="history-grid"><span style="color:#94a3b8;">No searches yet</span></div>
+    <!-- Upload image -->
+    <button class="btn-upload" title="Search by image" id="btn-upload">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+    </button>
+    <input type="file" id="file-input" accept="image/*"/>
+
+    <button class="btn-search" id="btn-search"><span>Search</span></button>
+  </div>
+
+  <!-- Voice status -->
+  <div class="voice-status" id="voice-status">
+    <div class="voice-dots"><span></span><span></span><span></span></div>
+    <span id="voice-text">Listening…</span>
+  </div>
+
+  <!-- Voice not supported banner -->
+  <div class="voice-unsupported" id="voice-unsupported">
+    ⚠️ Voice search requires a browser that supports the Web Speech API (e.g., <strong>Chrome</strong> or <strong>Edge</strong>). Your current browser doesn't support it.
+  </div>
+
+  <!-- Image preview -->
+  <div class="image-preview-wrap" id="preview-wrap">
+    <img id="image-preview" src="" alt="uploaded preview"/>
+    <div>
+      <div style="font-size:0.82rem;font-weight:500;margin-bottom:2px;">Image loaded</div>
+      <div class="preview-label">Will be combined with your text query</div>
     </div>
-</div>
+    <button class="btn-clear-img" id="btn-clear-img" title="Remove image">✕</button>
+  </div>
+
+  <!-- Active filters -->
+  <div class="filters-row" id="filters-row">
+    <span class="chip-label">Detected:</span>
+  </div>
+</section>
+
+<!-- ── RESULTS ── -->
+<section class="results-section" id="results-section">
+  <div class="state-message" id="state-idle">
+    <span class="state-icon">✦</span>
+    <p>Your perfect find is one search away.<br/>Try voice, text, or upload a photo.</p>
+  </div>
+</section>
 
 <script>
-    const API_BASE = "https://ai-powered-visual-search-and-product.onrender.com/search/";
-    const USE_BACKEND = true;
-    let currentRawResults = [];
-    let sessionHistory = [];
-    let activeCameraCallback = null;
-    let currentSelectedFile = null;   
+// ── CONFIG ──────────────────────────────────────────────────
+const API_BASE = 'http://localhost:8000'; // ← change to your backend URL
 
-    const unifiedFileInput = document.getElementById("unifiedFileUpload");
-    const unifiedQueryInput = document.getElementById("unifiedQuery");
-    const previewContainer = document.getElementById("imagePreviewContainer");
-    const previewThumb = document.getElementById("previewThumb");
-    const previewFileNameSpan = document.getElementById("previewFileName");
-    const removeImageBtn = document.getElementById("removeImageBtn");
-    const textOnlyHint = document.getElementById("textOnlyHint");
-    const activeModeHintSpan = document.getElementById("activeModeHint");
-    const plusBtn = document.getElementById("plusUploadBtn");
+// ── STATE ───────────────────────────────────────────────────
+let uploadedFile = null;
+let isListening  = false;
+let recognition  = null;
 
-    function showUploadOptions() {
-        const overlay = document.createElement('div');
-        overlay.className = 'upload-options-overlay';
-        overlay.innerHTML = `
-            <div class="upload-options-card">
-                <h3>Add media</h3>
-                <button id="optionUploadImage" class="option-btn">Upload Image</button>
-                <button id="optionCamera" class="option-btn">Use Camera</button>
-                <button id="optionCancel" class="option-btn cancel-options">Cancel</button>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-        
-        const uploadBtn = overlay.querySelector('#optionUploadImage');
-        const cameraBtn = overlay.querySelector('#optionCamera');
-        const cancelBtn = overlay.querySelector('#optionCancel');
-        
-        uploadBtn.addEventListener('click', () => {
-            unifiedFileInput.click();
-            document.body.removeChild(overlay);
-        });
-        cameraBtn.addEventListener('click', () => {
-            document.body.removeChild(overlay);
-            openCamera((file) => {
-                currentSelectedFile = file;
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                unifiedFileInput.files = dataTransfer.files;
-                updateUIMode();
-            });
-        });
-        cancelBtn.addEventListener('click', () => {
-            document.body.removeChild(overlay);
-        });
+// ── VOICE SUPPORT CHECK ──────────────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+const voiceSupported = !!SpeechRecognition;
+
+if (!voiceSupported) {
+  // Dim the mic button and show a tooltip rather than breaking on click
+  const micBtn = document.getElementById('btn-voice');
+  micBtn.style.opacity = '0.4';
+  micBtn.style.cursor = 'not-allowed';
+  micBtn.title = 'Voice search not supported in this browser. Try Chrome or Edge.';
+}
+
+// ── WIRE UP EVENTS (no inline onclick) ──────────────────────
+document.getElementById('btn-voice').addEventListener('click', toggleVoice);
+document.getElementById('btn-upload').addEventListener('click', () => document.getElementById('file-input').click());
+document.getElementById('file-input').addEventListener('change', handleImageUpload);
+document.getElementById('btn-clear-img').addEventListener('click', clearImage);
+document.getElementById('btn-search').addEventListener('click', doSearch);
+document.getElementById('search-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') doSearch();
+});
+
+// ── VOICE INPUT ─────────────────────────────────────────────
+function toggleVoice() {
+  if (!voiceSupported) {
+    document.getElementById('voice-unsupported').classList.add('visible');
+    setTimeout(() => document.getElementById('voice-unsupported').classList.remove('visible'), 5000);
+    return;
+  }
+
+  if (isListening) {
+    recognition && recognition.abort();
+    stopListening();
+    return;
+  }
+
+  startListening();
+}
+
+function startListening() {
+  recognition = new SpeechRecognition();
+  recognition.continuous      = false;
+  recognition.interimResults  = true;
+  recognition.lang            = 'en-IN'; // Indian English; works for Hindi-mixed too
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('btn-voice').classList.add('listening');
+    const vs = document.getElementById('voice-status');
+    vs.classList.add('visible');
+    document.getElementById('voice-text').textContent = 'Listening…';
+  };
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    let finalText = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) {
+        finalText += t;
+      } else {
+        interim += t;
+      }
     }
-    
-    function updateUIMode() {
-        if (currentSelectedFile) {
-            previewContainer.style.display = "flex";
-            const reader = new FileReader();
-            reader.onload = (e) => { previewThumb.src = e.target.result; };
-            reader.readAsDataURL(currentSelectedFile);
-            previewFileNameSpan.innerText = currentSelectedFile.name.length > 25 ? currentSelectedFile.name.slice(0,22)+"..." : currentSelectedFile.name;
-            activeModeHintSpan.innerText = "Image + Text mode";
-            textOnlyHint.style.display = "none";
-        } else {
-            previewContainer.style.display = "none";
-            previewThumb.src = "";
-            if (unifiedQueryInput.value.trim().length > 0) {
-                activeModeHintSpan.innerText = "Text semantic mode";
-                textOnlyHint.style.display = "block";
-            } else {
-                activeModeHintSpan.innerText = "Add image or text";
-                textOnlyHint.style.display = "none";
-            }
-        }
+    const input = document.getElementById('search-input');
+    input.value = finalText || interim;
+    document.getElementById('voice-text').textContent = finalText ? 'Got it!' : 'Listening…';
+    if (finalText) {
+      setTimeout(() => {
+        stopListening();
+        doSearch();
+      }, 400);
     }
+  };
 
-    unifiedFileInput.addEventListener("change", (e) => {
-        if (e.target.files && e.target.files[0]) {
-            currentSelectedFile = e.target.files[0];
-            updateUIMode();
-        } else {
-            currentSelectedFile = null;
-            updateUIMode();
-        }
-    });
+  recognition.onnomatch = () => {
+    document.getElementById('voice-text').textContent = 'No match — try again';
+    setTimeout(stopListening, 1500);
+  };
 
-    removeImageBtn.addEventListener("click", () => {
-        currentSelectedFile = null;
-        unifiedFileInput.value = "";
-        updateUIMode();
-    });
-
-    unifiedQueryInput.addEventListener("input", () => {
-        if (!currentSelectedFile && unifiedQueryInput.value.trim().length > 0) {
-            activeModeHintSpan.innerText = "Text semantic mode";
-            textOnlyHint.style.display = "block";
-        } else if (!currentSelectedFile && unifiedQueryInput.value.trim().length === 0) {
-            activeModeHintSpan.innerText = "Add image or text";
-            textOnlyHint.style.display = "none";
-        } else if (currentSelectedFile) {
-            textOnlyHint.style.display = "none";
-            activeModeHintSpan.innerText = "Image + Text mode";
-        }
-    });
-
-    async function checkBackendConnection() {
-        const statusEl = document.getElementById('backendStatus');
-        if (!USE_BACKEND) { statusEl.textContent = 'Demo mode'; statusEl.className = 'status-badge disconnected'; return; }
-        try {
-            const response = await fetch(`${API_BASE}/`);
-            if (response.ok) {
-                statusEl.textContent = `Connected to ${API_BASE}`;
-                statusEl.className = 'status-badge connected';
-            } else throw new Error();
-        } catch (error) {
-            statusEl.textContent = `Cannot reach ${API_BASE} — run backend (uvicorn main:app --reload)`;
-            statusEl.className = 'status-badge disconnected';
-        }
+  recognition.onerror = (e) => {
+    let msg = 'Could not hear — try again';
+    if (e.error === 'not-allowed') {
+      msg = 'Microphone access denied. Allow mic in browser settings.';
+    } else if (e.error === 'network') {
+      msg = 'Network error during voice recognition.';
+    } else if (e.error === 'no-speech') {
+      msg = 'No speech detected — try again.';
     }
+    document.getElementById('voice-text').textContent = msg;
+    setTimeout(stopListening, 2000);
+  };
 
-    function loadHistory() { const stored = localStorage.getItem("nova_search_history"); if(stored) { try{ sessionHistory = JSON.parse(stored); renderHistory(); }catch(e){} } }
-    function saveHistory() { localStorage.setItem("nova_search_history", JSON.stringify(sessionHistory.slice(0,12))); renderHistory(); }
-    function addHistoryEntry(type, previewText, resultsArray) {
-        sessionHistory.unshift({ type, preview: previewText.slice(0,50), timestamp: new Date().toLocaleTimeString(), snapshot: resultsArray ? resultsArray.slice(0,5) : [] });
-        if(sessionHistory.length > 15) sessionHistory.pop();
-        saveHistory();
-    }
-    function renderHistory() {
-        const container = document.getElementById("historyList");
-        if(!sessionHistory.length){ container.innerHTML = "<span style='color:#94a3b8;'>No searches yet</span>"; return; }
-        container.innerHTML = sessionHistory.map((h, idx) => `<div class="history-item" data-idx="${idx}"><span>${h.type} · ${h.preview}</span><small>${h.timestamp}</small></div>`).join("");
-        document.querySelectorAll(".history-item").forEach(el => {
-            el.addEventListener("click", () => {
-                const entry = sessionHistory[el.dataset.idx];
-                if(entry && entry.snapshot && entry.snapshot.length){ displayResults(entry.snapshot); currentRawResults = entry.snapshot; document.getElementById("activeModeBadge").innerText = `history: ${entry.type}`; generateSimilarStyle(entry.snapshot); }
-                else alert("Preview only, re-run search");
-            });
-        });
-    }
+  recognition.onend = () => {
+    // Only auto-stop if we didn't already finalise
+    if (isListening) stopListening();
+  };
 
-    function displayResults(products) {
-        const container = document.getElementById("resultsGrid");
-        if(!products || products.length === 0){ container.innerHTML = `<div style="padding:32px;text-align:center;">No products found. Adjust filters or try another search.</div>`; document.getElementById("resultCountBadge").innerText = "0 items"; return; }
-        document.getElementById("resultCountBadge").innerText = `${products.length} items`;
-        container.innerHTML = products.map(p => {
-            let imageName = p.image || (p.image_url?.split('/images/')[1]) || "";
-            let price = p.price || 0, color = p.color || "—", category = p.category || "—", brand = p.brand || "—", productName = p.product_name || imageName;
-            const imgUrl = p.image_url || `${API_BASE}/images/${imageName}`;
-            return `<div class="product-card"><div class="card-img"><img src="${imgUrl}" alt="${productName}" onerror="this.src='https://placehold.co/400x500?text=No+Preview'"></div><div class="card-details"><div class="price">₹${Number(price).toLocaleString('en-IN')}</div><div class="brand">${String(brand).toUpperCase()}</div><div class="color-cat"><span>${color}</span><span>${category}</span></div><div class="product-name">${productName}</div><div class="match-tag">style match</div></div></div>`;
-        }).join("");
-    }
+  try {
+    recognition.start();
+  } catch (err) {
+    // Recognition already started, ignore
+    console.warn('SpeechRecognition start error:', err);
+  }
+}
 
-    function applyClientFiltersAndSort() {
-        if(!currentRawResults.length) return;
-        let filtered = [...currentRawResults];
-        const colorVal = document.getElementById("filterColor").value, catVal = document.getElementById("filterCategory").value, brandVal = document.getElementById("filterBrand").value.trim().toLowerCase(), maxPrice = parseFloat(document.getElementById("filterPrice").value);
-        filtered = filtered.filter(p => {
-            if(colorVal && !(p.color || "").toLowerCase().includes(colorVal.toLowerCase())) return false;
-            if(catVal && !(p.category || "").toLowerCase().includes(catVal.toLowerCase())) return false;
-            if(brandVal && !(p.brand || "").toLowerCase().includes(brandVal) && !(p.product_name || "").toLowerCase().includes(brandVal)) return false;
-            if(!isNaN(maxPrice) && (p.price || 0) > maxPrice) return false;
-            return true;
-        });
-        const sortType = document.getElementById("sortBy").value;
-        if(sortType === "price_asc") filtered.sort((a,b) => (a.price||0)-(b.price||0));
-        if(sortType === "price_desc") filtered.sort((a,b) => (b.price||0)-(a.price||0));
-        displayResults(filtered);
-        if(filtered.length) generateSimilarStyle(filtered);
-    }
+function stopListening() {
+  isListening = false;
+  document.getElementById('btn-voice').classList.remove('listening');
+  setTimeout(() => {
+    document.getElementById('voice-status').classList.remove('visible');
+  }, 1000);
+}
 
-    function generateSimilarStyle(results){
-        const styleContainer = document.getElementById("similarStyleGrid");
-        if(!results.length){ styleContainer.innerHTML = "<div>No suggestions available</div>"; return; }
-        const categories = [...new Set(results.map(r => r.category).filter(c => c && c !== "—"))];
-        if(categories.length && currentRawResults.length){
-            let similarCandidates = currentRawResults.filter(r => categories.includes(r.category));
-            similarCandidates = similarCandidates.slice(0,6);
-            if(similarCandidates.length < 3) similarCandidates = currentRawResults.slice(0,5);
-            styleContainer.innerHTML = similarCandidates.map(p => {
-                const imgUrl = p.image_url || `${API_BASE}/images/${p.image}`;
-                return `<div class="product-card" style="flex:0 0 230px;"><div class="card-img" style="height:160px;"><img src="${imgUrl}" style="object-fit:cover; width:100%; height:100%;" onerror="this.src='https://placehold.co/300x400?text=Not+found'"></div><div class="card-details"><div class="price">₹${p.price||0}</div><div class="brand">${p.brand}</div><div class="color-cat">${p.category}</div></div></div>`;
-            }).join("");
-        } else { styleContainer.innerHTML = "<div>Add more details to see style suggestions</div>"; }
-    }
+// ── IMAGE UPLOAD ─────────────────────────────────────────────
+function handleImageUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
 
-    async function callSearchAPI(payload) {
-        if (!USE_BACKEND) throw new Error("Backend not available");
-        const formData = new FormData();
-        if(payload.file) formData.append("file", payload.file);
-        if(payload.query) formData.append("query", payload.query);
-        const response = await fetch(`${API_BASE}/search/`, { method: "POST", body: formData });
-        if(!response.ok) throw new Error(`API error ${response.status}`);
-        const data = await response.json();
-        if(data.error) throw new Error(data.error);
-        let finalResults = [];
-        if(data.results && Array.isArray(data.results)) finalResults = data.results;
-        else if(data.similar_images && Array.isArray(data.similar_images)) finalResults = data.similar_images.map(img => ({ image: img, image_url: `${API_BASE}/images/${img}`, price: 0, color: "—", category: "—", brand: "—" }));
-        return finalResults;
-    }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    document.getElementById('image-preview').src = ev.target.result;
+    document.getElementById('preview-wrap').classList.add('visible');
+  };
+  reader.readAsDataURL(file);
+}
 
-    async function performUnifiedSearch() {
-        if (!USE_BACKEND) { alert("Backend not connected. Please start FastAPI server: uvicorn main:app --reload"); return; }
-        const file = currentSelectedFile;
-        const queryText = unifiedQueryInput.value.trim();
-        if (!file && !queryText) { alert("Please provide an image, text description, or both"); return; }
-        
-        let mode = "";
-        let payload = {};
-        if(file && queryText) { mode = "hybrid"; payload = { file, query: queryText }; }
-        else if(file && !queryText) { mode = "image"; payload = { file }; }
-        else if(!file && queryText) { mode = "text"; payload = { query: queryText }; }
-        
-        document.getElementById("resultsGrid").innerHTML = "<div class='loader'>AI is searching styles & visual matches...</div>";
-        try {
-            const results = await callSearchAPI(payload);
-            currentRawResults = results;
-            displayResults(results);
-            let modeLabel = mode === "image" ? "Image Search" : (mode === "text" ? "Text Search" : "Multimodal (Image+Text)");
-            document.getElementById("activeModeBadge").innerText = modeLabel;
-            let previewEntry = "";
-            if(mode === "image") previewEntry = "Image: " + file.name;
-            else if(mode === "text") previewEntry = "Text: \"" + queryText.slice(0,40) + "\"";
-            else previewEntry = "Hybrid: " + file.name + " + \"" + queryText.slice(0,25) + "\"";
-            addHistoryEntry(modeLabel, previewEntry, results.slice(0,8));
-            generateSimilarStyle(results);
-        } catch(e) {
-            console.error(e);
-            document.getElementById("resultsGrid").innerHTML = `<div style="color:#b91c1c; padding:20px;">Error: ${e.message}<br><br>Check backend and image folder</div>`;
-        }
-    }
+function clearImage() {
+  uploadedFile = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('preview-wrap').classList.remove('visible');
+  document.getElementById('image-preview').src = '';
+}
 
-    function openCamera(callback) {
-        activeCameraCallback = callback;
-        const video = document.createElement('video');
-        const container = document.createElement('div');
-        container.className = 'video-preview';
-        video.autoplay = true; video.playsInline = true;
-        const captureBtn = document.createElement('button'); captureBtn.innerText = 'Capture'; captureBtn.className = 'capture-btn';
-        const closeBtn = document.createElement('button'); closeBtn.innerText = 'Close'; closeBtn.className = 'close-camera';
-        const controls = document.createElement('div'); controls.className = 'capture-controls';
-        controls.appendChild(captureBtn); controls.appendChild(closeBtn);
-        container.appendChild(video); container.appendChild(controls);
-        document.body.appendChild(container);
-        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-            video.srcObject = stream;
-            captureBtn.onclick = () => {
-                const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob(blob => {
-                    const file = new File([blob], "camera-snap.jpg", { type: "image/jpeg" });
-                    if(activeCameraCallback) activeCameraCallback(file);
-                    stream.getTracks().forEach(t => t.stop());
-                    document.body.removeChild(container);
-                }, 'image/jpeg');
-            };
-            closeBtn.onclick = () => { stream.getTracks().forEach(t => t.stop()); document.body.removeChild(container); };
-        }).catch(err => { alert("Camera error: "+err.message); document.body.removeChild(container); });
-    }
+// ── SEARCH ───────────────────────────────────────────────────
+async function doSearch() {
+  const query = document.getElementById('search-input').value.trim();
+  if (!query && !uploadedFile) return;
 
-    plusBtn.addEventListener("click", () => showUploadOptions());
-    document.getElementById("unifiedSearchBtn").onclick = () => performUnifiedSearch();
-    document.getElementById("applyRefineBtn").onclick = () => applyClientFiltersAndSort();
-    document.getElementById("clearHistoryBtn").onclick = () => { sessionHistory = []; saveHistory(); renderHistory(); };
-    
-    checkBackendConnection();
-    loadHistory();
-    updateUIMode();
+  showLoading();
+
+  const fd = new FormData();
+  if (query)        fd.append('query', query);
+  if (uploadedFile) fd.append('file', uploadedFile);
+
+  try {
+    const res  = await fetch(`${API_BASE}/search/`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.error) { showError(data.error); return; }
+    showResults(data);
+  } catch (err) {
+    showError('Could not reach the server. Is the backend running?');
+    console.error(err);
+  }
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function showLoading() {
+  document.getElementById('results-section').innerHTML = `
+    <div class="state-message">
+      <div class="spinner"></div>
+      <p>Searching the collection…</p>
+    </div>`;
+  document.getElementById('filters-row').classList.remove('visible');
+  document.getElementById('filters-row').innerHTML = '<span class="chip-label">Detected:</span>';
+}
+
+function showError(msg) {
+  document.getElementById('results-section').innerHTML = `
+    <div class="state-message">
+      <span class="state-icon" style="opacity:.5">⚠</span>
+      <p>${msg}</p>
+    </div>`;
+}
+
+function showResults(data) {
+  const sec    = document.getElementById('results-section');
+  const items  = data.results || [];
+  const filters = data.filters || {};
+
+  const chips = Object.entries(filters)
+    .filter(([k, v]) => v !== null && v !== undefined)
+    .map(([k, v]) => `<span class="chip">${v}</span>`)
+    .join('');
+
+  const fr = document.getElementById('filters-row');
+  if (chips) {
+    fr.innerHTML = '<span class="chip-label">Detected:</span>' + chips;
+    fr.classList.add('visible');
+  }
+
+  if (!items.length) {
+    sec.innerHTML = `
+      <div class="state-message">
+        <span class="state-icon" style="opacity:.4">◎</span>
+        <p>No results matched your search.<br/>Try different words or a broader query.</p>
+      </div>`;
+    return;
+  }
+
+  const typeLabel = data.type === 'image + text' ? 'image + text search'
+                  : data.type === 'image'        ? 'visual search'
+                  : 'text search';
+
+  sec.innerHTML = `
+    <div class="results-header">
+      <div class="results-count">${items.length} results</div>
+      <div class="results-type">${typeLabel}</div>
+    </div>
+    <div class="grid" id="results-grid"></div>`;
+
+  const grid = document.getElementById('results-grid');
+  items.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = `${i * 0.04}s`;
+
+    const price = item.price
+      ? `₹${Number(item.price).toLocaleString('en-IN')}`
+      : '—';
+
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        <img src="${item.image_url}" alt="${item.product_name}"
+             loading="lazy" onerror="this.style.opacity=0"/>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${item.product_name || 'Fashion Item'}</div>
+        <div class="card-meta">
+          <span class="card-price">${price}</span>
+          <span class="card-badge">${item.category || ''}</span>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
 </script>
 </body>
 </html>

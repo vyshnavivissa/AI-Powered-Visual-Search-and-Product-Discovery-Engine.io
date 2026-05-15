@@ -4,18 +4,16 @@ import json
 import re
 from dotenv import load_dotenv
 
-# load .env
 load_dotenv()
 
 api_key = os.getenv("GROQ_API_KEY")
-
 if not api_key:
-    raise ValueError("GROQ_API_KEY not found.")
+    raise ValueError("GROQ_API_KEY not found in .env")
 
 client = Groq(api_key=api_key)
 
 
-def extract_filters(query):
+def extract_filters(query: str) -> dict:
     prompt = f"""
 You are an AI that extracts shopping filters from user queries for a fashion dataset.
 
@@ -60,7 +58,7 @@ Color mapping rules:
 Extract:
 - color: map to closest available color or null
 - max_price: number only or null
-- category: map to closest available category or null  
+- category: map to closest available category or null
 - brand: extract as-is in lowercase or null
 
 Return ONLY valid JSON. No explanation, no markdown, no backticks.
@@ -79,17 +77,9 @@ Query: "blue skirts"
 Output:
 {{"color": "blue", "max_price": null, "category": "skirts", "brand": null}}
 
-Query: "white formal shoes"
-Output:
-{{"color": "white", "max_price": null, "category": "formal shoes", "brand": null}}
-
 Query: "puma sweatshirt grey under 2000"
 Output:
 {{"color": "grey", "max_price": 2000, "category": "sweatshirts", "brand": "puma"}}
-
-Query: "handbag brown"
-Output:
-{{"color": "brown", "max_price": null, "category": "handbags", "brand": null}}
 
 Query: "{query}"
 Output:
@@ -99,7 +89,7 @@ Output:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.5
+            temperature=0.5,
         )
 
         text = response.choices[0].message.content.strip()
@@ -129,9 +119,4 @@ Output:
     except Exception as e:
         print("LLM error:", e)
 
-    return {
-        "color": None,
-        "max_price": None,
-        "category": None,
-        "brand": None
-    }
+    return {"color": None, "max_price": None, "category": None, "brand": None}
