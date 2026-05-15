@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+BACKEND_URL = os.getenv("BACKEND_URL")
 
 EXPECTED_DIM = 512
 
